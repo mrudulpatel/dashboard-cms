@@ -22,7 +22,6 @@ import { toast } from "sonner";
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 import AlertModal from "@/components/modals/alert-modal";
-import { convertTimestampToISO } from "@/lib/utils";
 
 const formSchema = z.object({
   label: z.string().min(1),
@@ -37,6 +36,8 @@ type BillboardFormValues = z.infer<typeof formSchema>;
 const BillboardForm: React.FC<BillboardFormProps> = ({ initialData }) => {
   const params = useParams();
   const router = useRouter();
+  
+  console.log(initialData);
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -47,16 +48,14 @@ const BillboardForm: React.FC<BillboardFormProps> = ({ initialData }) => {
 
   const form = useForm<BillboardFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      label: "",
-    },
+    defaultValues: initialData || {},
   });
 
   const onSubmit = async (data: BillboardFormValues) => {
     try {
       setLoading(true);
       if (initialData) {
-        await axios.put(
+        await axios.patch(
           `/api/${params.storeId}/billboards/${params.billboardId}`,
           {
             ...data,
@@ -135,6 +134,7 @@ const BillboardForm: React.FC<BillboardFormProps> = ({ initialData }) => {
                       disabled={loading}
                       placeholder="Billboard Label"
                       {...field}
+                      value={field.value || ""}
                     />
                   </FormControl>
                   <FormMessage />

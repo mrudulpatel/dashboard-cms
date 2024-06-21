@@ -35,13 +35,18 @@ export async function getAllStoresByUserId(userId: string) {
 export async function getBillboard(storeId: string, billboardId: string) {
   if (!storeId || !billboardId) return null;
   const docRef = doc(db, `billboards/${billboardId}`);
-  return (await getDoc(docRef)).data() as Billboard;
+  const data = (await getDoc(docRef)).data();
+  return data as Billboard;
 }
 
 export async function getBillboards(storeId: string) {
   if (!storeId) return null;
   const colRef = collection(db, "billboards");
-  const q = query(colRef, where("storeId", "==", storeId), orderBy("createdAt", "desc"));
+  const q = query(
+    colRef,
+    where("storeId", "==", storeId),
+    orderBy("createdAt", "desc")
+  );
   console.log(q);
   const billboards = (await getDocs(q)).docs;
   return billboards.map((doc) => doc.data() as Billboard);

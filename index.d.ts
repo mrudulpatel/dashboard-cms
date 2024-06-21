@@ -10,7 +10,6 @@ interface Store {
 interface Billboard {
   id: string;
   label: string;
-  image_url: string;
   storeId: string;
   createdAt: Date;
   updatedAt: Date;
