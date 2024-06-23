@@ -7,17 +7,10 @@ const BillboardsPage = async ({ params }: { params: { storeId: string } }) => {
   const billboards = await getBillboards(params.storeId);
 
   const formattedBillboards = billboards?.map((item) => {
-    const convertTimestampToDate = (timestamp: any) => {
-      return new Date(timestamp.seconds * 1000);
-    };
-  
-    const dateObject = convertTimestampToDate(item.createdAt);
-    console.log(dateObject);
-    const isValidDate = Date.parse(dateObject.toString());
     return {
-      id: item.id,
+      _id: item._id,
       label: item.label,
-      createdAt: isValidDate ? format(dateObject, "MMMM do, yyyy") : "-",
+      createdAt: format(item.createdAt, "MMMM do, yyyy"),
     };
   }) as BillboardColumn[];
 

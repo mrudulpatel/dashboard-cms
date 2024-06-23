@@ -1,19 +1,11 @@
 "use server";
 
-import { db } from "@/lib/firebase";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  limit,
-  orderBy,
-  query,
-  where,
-} from "firebase/firestore";
+
 import { connectToDB } from "../mongoose";
 import Store from "../models/store.model";
 import { auth } from "@clerk/nextjs/server";
+import Billboard from "../models/billboard.model";
+import { AddBillboardData, BillboardFormValues, BillboardType } from "@/index";
 
 export async function getStore(storeId: string) {
   if (!storeId) return null;
@@ -95,7 +87,10 @@ export async function updateStore(data: any, id: string) {
       name: data.name,
     };
 
-    const updatedStore = await Store.findOneAndUpdate({ _id: id, userId }, store).lean();
+    const updatedStore = await Store.findOneAndUpdate(
+      { _id: id, userId },
+      store
+    ).lean();
 
     if (!updatedStore) return null;
 
@@ -105,27 +100,106 @@ export async function updateStore(data: any, id: string) {
   }
 }
 
-export async function getBillboard(storeId: string, billboardId: string) {
+export async function getBillboard(
+  storeId: string,
+  billboardId: string
+): Promise<BillboardType | null> {
   if (!storeId || !billboardId) return null;
-  // const docRef = doc(db, `billboards/${billboardId}`);
-  // const data = (await getDoc(docRef)).data();
-  // return data as Billboard;
 
   try {
+    await connectToDB();
+
+    const billboard = await Billboard.findOne({
+      _id: billboardId,
+      storeId,
+    }).lean();
+
+    if (!billboard) return null;
+    console.log(billboard);
+    return billboard as BillboardType; // Ensure the returned object conforms to the BillboardType
   } catch (error) {
     console.log("[GET_BILLBOARD]", error);
+    return null;
   }
 }
 
 export async function getBillboards(storeId: string) {
-  // if (!storeId) return null;
-  // const colRef = collection(db, "billboards");
-  // const q = query(
-  //   colRef,
-  //   where("storeId", "==", storeId),
-  //   orderBy("createdAt", "desc")
-  // );
-  // console.log(q);
-  // const billboards = (await getDocs(q)).docs;
-  // return billboards.map((doc) => doc.data() as Billboard);
+  if (!storeId) return null;
+  try {
+    connectToDB();
+
+    const billboards = await Billboard.find({ storeId }).lean();
+
+    if (!billboards) return null;
+
+    console.log(billboards);
+
+    return billboards;
+  } catch (error) {
+    console.log("[GET_BILLBOARDS]", error);
+  }
+}
+
+export async function addBillboard(
+  data: AddBillboardData
+): Promise<BillboardType | null> {
+  if (!data) return null;
+
+  try {
+    await connectToDB();
+
+    const billboard = new Billboard({
+      label: data.label,
+      storeId: data.storeId,
+    });
+
+    const savedBillboard = await billboard.save();
+
+    if (!savedBillboard) return null;
+
+    // Convert the savedBillboard to the expected type
+    return savedBillboard.toObject() as BillboardType;
+  } catch (error) {
+    console.log("[ADD_BILLBOARD]", error);
+    return null;
+  }
+}
+
+export async function updateBillboard(
+  billboardId: string,
+  data: BillboardFormValues
+): Promise<BillboardType | null> {
+  if (!billboardId || !data) return null;
+
+  try {
+    await connectToDB();
+
+    const updatedBillboard = await Billboard.findByIdAndUpdate(
+      billboardId,
+      data,
+      { new: true }
+    ).lean();
+
+    if (!updatedBillboard) return null;
+
+    return updatedBillboard as BillboardType;
+  } catch (error) {
+    console.log("[UPDATE_BILLBOARD]", error);
+    return null;
+  }
+}
+
+export async function deleteBillboard(billboardId: string) {
+  if (!billboardId) return null;
+
+  try {
+    await connectToDB();
+
+    await Billboard.findByIdAndDelete(billboardId);
+
+    return true;
+  } catch (error) {
+    console.log("[DELETE_BILLBOARD]", error);
+    return null;
+  }
 }

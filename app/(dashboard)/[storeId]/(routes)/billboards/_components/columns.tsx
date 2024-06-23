@@ -4,7 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import CellAction from "./cell-action";
 
 export type BillboardColumn = {
-  id: string;
+  _id: string;
   label: string;
   createdAt: string;
 };
@@ -21,6 +21,9 @@ export const columns: ColumnDef<BillboardColumn>[] = [
  {
    id: "actions",
    header: "Actions",
-   cell: ({row}) => <CellAction data={row.original} />
+   cell: ({row}) => {
+    console.log("Row: ", row);
+    return <CellAction data={row.original} />
+   }
  }
 ];

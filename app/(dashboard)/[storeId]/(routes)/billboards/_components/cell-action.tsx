@@ -25,7 +25,7 @@ const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const params = useParams();
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-
+  console.log(data);
   const onCopy = (id: string) => {
     navigator.clipboard.writeText(id);
     toast.success("Copied to clipboard");
@@ -34,7 +34,7 @@ const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.storeId}/billboards/${data?.id}`);
+      await axios.delete(`/api/${params.storeId}/billboards/${data?._id}`);
       router.refresh();
       toast.success("Billboard deleted");
     } catch (error) {
@@ -63,13 +63,13 @@ const CellAction: React.FC<CellActionProps> = ({ data }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => onCopy(data?.id)}>
+          <DropdownMenuItem onClick={() => onCopy(data?._id)}>
             <Copy className="mr-2 h-4 w-4" />
             Copy Id
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() =>
-              router.push(`/${params.storeId}/billboards/${data?.id}`)
+              router.push(`/${params.storeId}/billboards/${data?._id}`)
             }
           >
             <Edit className="mr-2 h-4 w-4" />

@@ -22,13 +22,15 @@ import { toast } from "sonner";
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 import AlertModal from "@/components/modals/alert-modal";
+import { BillboardType } from "@/index";
+import { addBillboard, deleteBillboard, updateBillboard } from "@/lib/actions";
 
 const formSchema = z.object({
   label: z.string().min(1),
 });
 
 interface BillboardFormProps {
-  initialData: Billboard | null;
+  initialData: BillboardType | null;
 }
 
 type BillboardFormValues = z.infer<typeof formSchema>;
@@ -36,7 +38,7 @@ type BillboardFormValues = z.infer<typeof formSchema>;
 const BillboardForm: React.FC<BillboardFormProps> = ({ initialData }) => {
   const params = useParams();
   const router = useRouter();
-  
+
   console.log(initialData);
 
   const [open, setOpen] = useState(false);
@@ -55,19 +57,12 @@ const BillboardForm: React.FC<BillboardFormProps> = ({ initialData }) => {
     try {
       setLoading(true);
       if (initialData) {
-        await axios.patch(
-          `/api/${params.storeId}/billboards/${params.billboardId}`,
-          {
-            ...data,
-          }
-        );
+        await updateBillboard(initialData._id, data);
       } else {
-        await axios.post(`/api/${params.storeId}/billboards`, {
-          ...data,
-        });
+        await addBillboard({ ...data, storeId: params.storeId });
       }
-      router.refresh();
       router.push(`/${params.storeId}/billboards`);
+      router.refresh();
       toast.success(toastMessage);
     } catch (error) {
       toast.error("Something went wrong.");
@@ -79,9 +74,8 @@ const BillboardForm: React.FC<BillboardFormProps> = ({ initialData }) => {
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(
-        `/api/${params.storeId}/billboards/${params.billboardId}`
-      );
+      if(!initialData) return;
+      await deleteBillboard(initialData?._id);
       router.refresh();
       router.push("/");
       toast.success(toastMessage);

@@ -9,10 +9,19 @@ interface Store {
   __v: number;
 }
 
-interface Billboard {
-  id: string;
+interface BillboardType {
+  _id: string;
   label: string;
   storeId: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface AddBillboardData {
+  label: string;
+  storeId: any;
+}
+
+interface BillboardFormValues {
+  label: string;
 }
