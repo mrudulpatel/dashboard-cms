@@ -8,7 +8,6 @@ import {
   StoreIcon,
 } from "lucide-react";
 import { useState } from "react";
-
 import { useStoreModal } from "@/hooks/use-store-modal";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,13 +25,14 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command";
+// import { Store } from "..";
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<
   typeof PopoverTrigger
 >;
 
 interface StoreSwitcherProps extends PopoverTriggerProps {
-  items: Store[];
+  items: any[];
 }
 
 export default function StoreSwitcher({
@@ -44,15 +44,15 @@ export default function StoreSwitcher({
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const formattedItems = items.map((item) => ({
-    label: item.name,
-    value: item.id,
+    name: item.name,
+    value: item._id,
   }));
 
   const currentStore = formattedItems.find(
     (item) => item.value === params.storeId
   );
 
-  const onStoreSelect = (store: { label: string; value: string }) => {
+  const onStoreSelect = (store: { name: string; value: string }) => {
     setOpen(false);
     router.push(`/${store.value}`);
   };
@@ -68,7 +68,7 @@ export default function StoreSwitcher({
           className={cn("w-[300px] justify-between", className)}
         >
           <Store className="mr-2 h-4 w-4" />
-          {currentStore?.label}
+          {currentStore?.name}
           <ChevronsUpDownIcon className="h-4 w-4 ml-auto shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -81,12 +81,12 @@ export default function StoreSwitcher({
             <CommandGroup heading="Stores">
               {formattedItems.map((store) => (
                 <CommandItem
-                  key={store.label}
+                  key={store.name}
                   className="text-sm"
                   onSelect={() => onStoreSelect(store)}
                 >
                   <StoreIcon className="mr-2 w-4 h-4" />
-                  {store.label}
+                  {store.name}
                   <CheckIcon
                     className={cn(
                       "ml-auto h-4 w-4",

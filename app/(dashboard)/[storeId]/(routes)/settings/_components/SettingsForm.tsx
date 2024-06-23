@@ -6,6 +6,7 @@ import { Trash } from "lucide-react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
+import { updateStore } from "@/lib/actions";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
@@ -19,11 +20,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { toast } from "sonner";
-import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 import AlertModal from "@/components/modals/alert-modal";
 import ApiAlert from "@/components/ui/api-alert";
 import { useOrigin } from "@/hooks/use-origin";
+import { Store } from "@/index";
 
 interface SettingsFormProps {
   initialData: Store;
@@ -36,7 +37,7 @@ const formSchema = z.object({
 type SettingsFormValues = z.infer<typeof formSchema>;
 
 const SettingsForm: React.FC<SettingsFormProps> = ({ initialData }) => {
-  const params = useParams();
+  const {storeId} = useParams();
   const router = useRouter();
   const origin = useOrigin();
 
@@ -50,7 +51,8 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ initialData }) => {
   const onSubmit = async (data: SettingsFormValues) => {
     try {
       setLoading(true);
-      await axios.patch(`/api/stores/${params.storeId}`, data);
+      const updatedStore = await updateStore(data, storeId.toString());
+      console.log(updatedStore);
       router.refresh();
       toast.success("Store updated.");
     } catch (error) {
@@ -63,7 +65,7 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ initialData }) => {
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/stores/${params.storeId}`);
+      // await axios.delete(`/api/stores/${params.storeId}`);
       router.refresh();
       router.push("/");
       toast.success("Store deleted.");
@@ -128,7 +130,7 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ initialData }) => {
       <ApiAlert
         variant="public"
         title="NEXT_PUBLIC_API_URL"
-        description={`${origin}/api/${params.storeId}`}
+        description={`${origin}/api/${storeId}`}
       />
     </>
   );

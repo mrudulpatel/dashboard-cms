@@ -1,10 +1,12 @@
+import { ObjectId } from "mongodb";
+
 interface Store {
-  id: string;
+  _id: ObjectId;
   name: string;
-  description: string;
   userId: string;
   createdAt: Date;
   updatedAt: Date;
+  __v: number;
 }
 
 interface Billboard {

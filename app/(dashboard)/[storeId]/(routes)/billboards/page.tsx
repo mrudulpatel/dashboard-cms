@@ -1,4 +1,4 @@
-import { getBillboards } from "@/actions";
+import { getBillboards } from "@/lib/actions";
 import BillboardClient from "@/app/(dashboard)/[storeId]/(routes)/billboards/_components/BillboardClient";
 import { BillboardColumn } from "./_components/columns";
 import { format } from "date-fns";

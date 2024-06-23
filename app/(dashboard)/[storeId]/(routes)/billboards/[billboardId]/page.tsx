@@ -1,4 +1,4 @@
-import { getBillboard } from "@/actions";
+import { getBillboard } from "@/lib/actions";
 import BillboardForm from "./_components/BillboardForm";
 
 const BillboardPage = async ({

@@ -19,6 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { addStore } from "@/lib/actions";
 
 const formSchema = z.object({
   name: z.string().min(1),
@@ -37,8 +38,8 @@ export const StoreModal = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
     try {
-      const response = await axios.post("/api/stores", values);
-      window.location.assign(`/${response.data.id}`);
+      const store = await addStore(values);
+      window.location.assign(`/${JSON.parse(store)?._id}`);
     } catch (error) {
       console.log("[STORES_SUBMIT]", error);
       toast.error("Failed to create store");
@@ -67,7 +68,7 @@ export const StoreModal = () => {
                     <FormControl>
                       <Input
                         disabled={loading}
-                        placeholder="E-Commerce"
+                        placeholder={"E-Commerce"}
                         {...field}
                       />
                     </FormControl>

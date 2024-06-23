@@ -1,4 +1,4 @@
-import { getStore } from "@/actions";
+import { getStore } from "@/lib/actions";
 import React from "react";
 
 interface DashboardPageProps {

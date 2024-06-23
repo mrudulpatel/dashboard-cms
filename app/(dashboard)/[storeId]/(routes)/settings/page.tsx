@@ -1,4 +1,4 @@
-import { getStore, getStoreByUserId } from "@/actions";
+import { getStore } from "@/lib/actions";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import SettingsForm from "@/app/(dashboard)/[storeId]/(routes)/settings/_components/SettingsForm";

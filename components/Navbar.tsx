@@ -3,7 +3,7 @@ import MainNav from "@/components/MainNav";
 import StoreSwitcher from "@/components/StoreSwitcher";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { getAllStoresByUserId } from "@/actions";
+import { getAllStoresByUserId } from "@/lib/actions";
 
 const Navbar = async () => {
   const { userId } = auth();

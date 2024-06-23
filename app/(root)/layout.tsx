@@ -1,5 +1,5 @@
 
-import { getStoreByUserId } from "@/actions";
+import { getStoreByUserId } from "@/lib/actions";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
@@ -16,7 +16,7 @@ export default async function SetupLayout({
   const store = await getStoreByUserId(userId);
 
   if (store) {
-    redirect(`/${store.id}`);
+    redirect(`/${store?._id!}`);
   }
 
   return <>{children}</>;

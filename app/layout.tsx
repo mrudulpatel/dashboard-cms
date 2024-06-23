@@ -6,7 +6,6 @@ import "./globals.css";
 import "react-dropzone-uploader/dist/styles.css";
 
 import { ModalProvider } from "@/providers/ModalProvider";
-import { ToastProvider } from "@/providers/ToastProvider";
 import { Toaster } from "sonner";
 
 // Font

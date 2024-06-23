@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 
-import { getStore } from "@/actions";
+import { getStore } from "@/lib/actions";
 import Navbar from "@/components/Navbar";
 
 export default async function StoreLayout({
