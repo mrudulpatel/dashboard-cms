@@ -21,6 +21,7 @@ import {
 import { Button } from "./button";
 import { Input } from "./input";
 import React from "react";
+import AlertModal from "../modals/alert-modal";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

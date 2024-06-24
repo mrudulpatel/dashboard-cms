@@ -7,6 +7,9 @@ import Billboard from "../models/billboard.model";
 import CategoryModel from "../models/category.model";
 import { CategoryFormValues } from "@/app/(dashboard)/[storeId]/(routes)/categories/[categoryId]/_components/CategoriesForm";
 import Sizes from "../models/size.model";
+import Colors from "../models/color.model";
+import { SizesFormValues } from "@/app/(dashboard)/[storeId]/(routes)/sizes/[sizeId]/_components/SizesForm";
+import { ColorsFormValues } from "@/app/(dashboard)/[storeId]/(routes)/colors/[colorId]/_components/ColorForm";
 
 export async function getStore(storeId: string) {
   if (!storeId) return null;
@@ -378,7 +381,7 @@ export async function addSize(
 
 export async function updateSize(
   sizeId: string,
-  data: SizeFormValues
+  data: SizesFormValues
 ): Promise<Size | null> {
   if (!sizeId || !data) return null;
 
@@ -413,6 +416,110 @@ export async function deleteSize(sizeId: string) {
     return true;
   } catch (error) {
     console.log("[DELETE_SIZE]", error);
+    return null;
+  }
+}
+export async function getColors(storeId: string) {
+  if (!storeId) return null;
+  try {
+    connectToDB();
+
+    const colors = await Colors.find({ storeId });
+
+    if (!colors) return null;
+
+    console.log(colors);
+
+    return colors;
+  } catch (error) {
+    console.log("[GET_COLORS]", error);
+  }
+}
+
+export async function getColor(
+  colorId: string
+): Promise<Color | null | undefined> {
+  if (!colorId) return null;
+  try {
+    connectToDB();
+
+    const color = await Colors.findOne({ _id: colorId }).lean();
+
+    if (!color) return null;
+
+    console.log(color);
+
+    // Manually assert the type of the result
+    return color as Color;
+  } catch (error) {
+    console.log("[GET_COLOR]", error);
+    return undefined;
+  }
+}
+
+export async function addColor(
+  data: AddColorData
+): Promise<Color | null> {
+  if (!data) return null;
+
+  try {
+    await connectToDB();
+
+    const color = new Colors({
+      name: data.name,
+      storeId: data.storeId,
+      value: data.value,
+    });
+
+    const savedColor = await color.save();
+
+    if (!savedColor) return null;
+
+    // Convert the savedColor to the expected type
+    return savedColor.toObject() as Color;
+  } catch (error) {
+    console.log("[ADD_COLOR]", error);
+    return null;
+  }
+}
+
+export async function updateColor(
+  colorId: string,
+  data: ColorsFormValues
+): Promise<Size | null> {
+  if (!colorId || !data) return null;
+
+  try {
+    await connectToDB();
+
+    const updatedColor = await Colors.findByIdAndUpdate(
+      colorId,
+      data,
+      {
+        new: true,
+      }
+    ).lean();
+
+    if (!updatedColor) return null;
+
+    return updatedColor as Size;
+  } catch (error) {
+    console.log("[UPDATE_COLOR]", error);
+    return null;
+  }
+}
+
+export async function deleteColor(colorId: string) {
+  if (!colorId) return null;
+
+  try {
+    await connectToDB();
+
+    await Colors.findByIdAndDelete(colorId);
+
+    return true;
+  } catch (error) {
+    console.log("[DELETE_COLOR]", error);
     return null;
   }
 }

@@ -6,23 +6,23 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
-import { SizesColumn, columns } from "./columns";
+import { ColorsColumn, columns } from "./columns";
 import { DataTable } from "@/components/ui/data-table";
 import ApiList from "@/components/ui/api-list";
 import { useEffect, useState } from "react";
-import { getSizes } from "@/lib/actions";
+import { getColors } from "@/lib/actions";
 import { format } from "date-fns";
 
-const SizesClient = () => {
+const ColorClient = () => {
   const router = useRouter();
   const params = useParams();
 
-  const [data, setData] = useState<SizesColumn[]>([]);
+  const [data, setData] = useState<ColorsColumn[]>([]);
   useEffect(() => {
-    const fetchSizes = async () => {
-      const sizes = await getSizes(params.storeId.toString());
-      if(!sizes) return;
-      const formattedSizes: SizesColumn[] = sizes?.map((item) => {
+    const fetchColors = async () => {
+      const colors = await getColors(params.storeId.toString());
+      if (!colors) return;
+      const formattedColors: ColorsColumn[] = colors?.map((item) => {
         return {
           _id: item._id,
           name: item.name,
@@ -30,29 +30,29 @@ const SizesClient = () => {
           createdAt: format(item.createdAt, "MMMM do, yyyy"),
         };
       });
-      setData(formattedSizes);
+      setData(formattedColors);
     };
-    fetchSizes();
+    fetchColors();
   }, [params.storeId]);
 
   return (
     <>
       <div className="flex items-center justify-between">
         <Heading
-          title={`Sizes (${data?.length})`}
-          description="Manage sizes for your store"
+          title={`Colors (${data?.length})`}
+          description="Manage colors for your store"
         />
-        <Button onClick={() => router.push(`/${params.storeId}/sizes/new`)}>
+        <Button onClick={() => router.push(`/${params.storeId}/colors/new`)}>
           <Plus className="mr-2 h-4 w-4" />
           Add New
         </Button>
       </div>
       <Separator />
       <DataTable columns={columns} data={data} searchKey="name" />
-      <Heading title="API" description="APIs for Sizes" />
-      <ApiList entityName="sizes" entityIdName={"sizeId"} />
+      <Heading title="API" description="APIs for Colors" />
+      <ApiList entityName="colors" entityIdName={"colorId"} />
     </>
   );
 };
 
-export default SizesClient;
+export default ColorClient;

@@ -45,7 +45,22 @@ interface AddSizeData {
   storeId: string;
 }
 
+interface AddColorData {
+  name: string;
+  value: string;
+  storeId: string;
+}
+
 type Size = {
+  _id: string;
+  storeId: string;
+  name: string;
+  value: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+type Color = {
   _id: string;
   storeId: string;
   name: string;
