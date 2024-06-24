@@ -1,7 +1,5 @@
-import { ObjectId } from "mongodb";
-
 interface Store {
-  _id: ObjectId;
+  _id: string;
   name: string;
   userId: string;
   createdAt: Date;
@@ -19,9 +17,39 @@ interface BillboardType {
 
 interface AddBillboardData {
   label: string;
-  storeId: any;
+  storeId: string;
 }
 
 interface BillboardFormValues {
   label: string;
+}
+
+type Category = {
+  _id: string;
+  storeId: string;
+  name: string;
+  billboardId: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+interface AddCategoryData {
+  name: string;
+  storeId: string;
+  billboardId: string;
+}
+
+interface AddSizeData {
+  name: string;
+  value: string;
+  storeId: string;
+}
+
+type Size = {
+  _id: string;
+  storeId: string;
+  name: string;
+  value: string;
+  createdAt: string;
+  updatedAt: string;
 }

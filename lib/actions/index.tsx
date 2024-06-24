@@ -1,11 +1,12 @@
 "use server";
 
-
 import { connectToDB } from "../mongoose";
 import Store from "../models/store.model";
 import { auth } from "@clerk/nextjs/server";
 import Billboard from "../models/billboard.model";
-import { AddBillboardData, BillboardFormValues, BillboardType } from "@/index";
+import CategoryModel from "../models/category.model";
+import { CategoryFormValues } from "@/app/(dashboard)/[storeId]/(routes)/categories/[categoryId]/_components/CategoriesForm";
+import Sizes from "../models/size.model";
 
 export async function getStore(storeId: string) {
   if (!storeId) return null;
@@ -43,7 +44,7 @@ export async function getAllStoresByUserId(userId: string) {
     connectToDB();
 
     const stores = Store.find({ userId }).lean();
-    console.log(stores);
+
     if (!stores) return null;
 
     return stores;
@@ -128,7 +129,7 @@ export async function getBillboards(storeId: string) {
   try {
     connectToDB();
 
-    const billboards = await Billboard.find({ storeId }).lean();
+    const billboards = await Billboard.find({ storeId });
 
     if (!billboards) return null;
 
@@ -200,6 +201,218 @@ export async function deleteBillboard(billboardId: string) {
     return true;
   } catch (error) {
     console.log("[DELETE_BILLBOARD]", error);
+    return null;
+  }
+}
+
+export async function getCategories(storeId: string) {
+  if (!storeId) return null;
+  try {
+    connectToDB();
+
+    const categories = await CategoryModel.find({ storeId })
+      .lean()
+      .populate("billboardId", "label");
+
+    if (!categories) return null;
+
+    console.log(categories);
+
+    return categories;
+  } catch (error) {
+    console.log("[GET_CATEGORIES]", error);
+  }
+}
+
+export async function getCategory(
+  categoryId: string
+): Promise<Category | null | undefined> {
+  if (!categoryId) return null;
+  try {
+    connectToDB();
+
+    const category = await CategoryModel.findOne({ _id: categoryId }).lean();
+
+    if (!category) return null;
+
+    console.log(category);
+
+    // Manually assert the type of the result
+    return category as Category;
+  } catch (error) {
+    console.log("[GET_CATEGORY]", error);
+    return undefined;
+  }
+}
+
+export async function addCategory(
+  data: AddCategoryData
+): Promise<Category | null> {
+  if (!data) return null;
+
+  try {
+    await connectToDB();
+
+    const category = new CategoryModel({
+      name: data.name,
+      storeId: data.storeId,
+      billboardId: data.billboardId,
+    });
+
+    const savedCategory = await category.save();
+
+    if (!savedCategory) return null;
+
+    // Convert the savedCategory to the expected type
+    return savedCategory.toObject() as Category;
+  } catch (error) {
+    console.log("[ADD_CATEGORY]", error);
+    return null;
+  }
+}
+
+export async function updateCategory(
+  categoryId: string,
+  data: CategoryFormValues
+): Promise<Category | null> {
+  if (!categoryId || !data) return null;
+
+  try {
+    await connectToDB();
+
+    const updatedCategory = await CategoryModel.findByIdAndUpdate(
+      categoryId,
+      data,
+      {
+        new: true,
+      }
+    ).lean();
+
+    if (!updatedCategory) return null;
+
+    return updatedCategory as Category;
+  } catch (error) {
+    console.log("[UPDATE_CATEGORY]", error);
+    return null;
+  }
+}
+
+export async function deleteCategory(categoryId: string) {
+  if (!categoryId) return null;
+
+  try {
+    await connectToDB();
+
+    await CategoryModel.findByIdAndDelete(categoryId);
+
+    return true;
+  } catch (error) {
+    console.log("[DELETE_CATEGORY]", error);
+    return null;
+  }
+}
+
+export async function getSizes(storeId: string) {
+  if (!storeId) return null;
+  try {
+    connectToDB();
+
+    const sizes = await Sizes.find({ storeId });
+
+    if (!sizes) return null;
+
+    console.log(sizes);
+
+    return sizes;
+  } catch (error) {
+    console.log("[GET_SIZES]", error);
+  }
+}
+
+export async function getSize(
+  sizeId: string
+): Promise<Size | null | undefined> {
+  if (!sizeId) return null;
+  try {
+    connectToDB();
+
+    const size = await Sizes.findOne({ _id: sizeId }).lean();
+
+    if (!size) return null;
+
+    console.log(size);
+
+    // Manually assert the type of the result
+    return size as Size;
+  } catch (error) {
+    console.log("[GET_SIZE]", error);
+    return undefined;
+  }
+}
+
+export async function addSize(
+  data: AddSizeData
+): Promise<Size | null> {
+  if (!data) return null;
+
+  try {
+    await connectToDB();
+
+    const size = new Sizes({
+      name: data.name,
+      storeId: data.storeId,
+      value: data.value,
+    });
+
+    const savedSize = await size.save();
+
+    if (!savedSize) return null;
+
+    // Convert the savedSize to the expected type
+    return savedSize.toObject() as Size;
+  } catch (error) {
+    console.log("[ADD_SIZE]", error);
+    return null;
+  }
+}
+
+export async function updateSize(
+  sizeId: string,
+  data: SizeFormValues
+): Promise<Size | null> {
+  if (!sizeId || !data) return null;
+
+  try {
+    await connectToDB();
+
+    const updatedSize = await Sizes.findByIdAndUpdate(
+      sizeId,
+      data,
+      {
+        new: true,
+      }
+    ).lean();
+
+    if (!updatedSize) return null;
+
+    return updatedSize as Size;
+  } catch (error) {
+    console.log("[UPDATE_SIZE]", error);
+    return null;
+  }
+}
+
+export async function deleteSize(sizeId: string) {
+  if (!sizeId) return null;
+
+  try {
+    await connectToDB();
+
+    await Sizes.findByIdAndDelete(sizeId);
+
+    return true;
+  } catch (error) {
+    console.log("[DELETE_SIZE]", error);
     return null;
   }
 }
